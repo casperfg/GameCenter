@@ -1,2 +1,10 @@
-# Project exclude paths
-/out/
+##############################
+## Java
+##############################
+.mtj.tmp/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
