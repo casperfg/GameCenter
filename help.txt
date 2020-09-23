@@ -1,0 +1,16 @@
+Snakes and Ladders is an ancient Indian board game for two or more players
+regarded as a worldwide classic. It is played on a game board with numbered
+squares with a number of "ladders" and "snakes" are pictured on the board,
+each connecting two specific squares.
+
+The object of the game is to navigate one's game piece,
+according to dice rolls, from the start (bottom left square)
+to the finish (top left square).
+
+If you land on the beginning of a ladder you automatically climb to the connecting square,
+however if you land on a snake, you fall down. First player to reach the end wins.
+
+Press start to begin the game. The player that gets to go first is chosen on random.
+Press your name and watch your piece move to the location according to the dice.
+If you get two identical dice, you get to go again.
+When you land on a ladder, press the tile you landed on to climb.
