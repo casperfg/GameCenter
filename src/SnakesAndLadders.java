@@ -25,21 +25,21 @@ public class SnakesAndLadders implements ActionListener {
 
     JLabel dice1, dice2;
     Icon diceIcon1, diceIcon2, player1, player2;
-    Icon[][] boardTileImage = new Icon[6][6];
-    JButton[][] boardTiles = new JButton[6][6];
+    Icon[][] boardImage = new Icon[6][6];
+    JButton[][] board = new JButton[6][6];
 
     JButton btn_start, btn_restart, btn_player1, btn_player2;
-    String string;
-    int path, previ, prevj;
+    String nr;
+    int boardPath;
     int player1_position, player2_position;
     boolean gameOver;
 
-    int[][] game = { {36, 35, 34, 33, 32, 31},
-                     {25, 26, 27, 28, 29, 30},
-                     {24, 23, 22, 21, 20, 19},
-                     {13, 14, 15, 16, 17, 18},
-                     {12, 11, 10,  9,  8,  7},
-                     { 1,  2,  3,  4,  5,  6}};
+    int[][] game = {{36, 35, 34, 33, 32, 31},
+                    {25, 26, 27, 28, 29, 30},
+                    {24, 23, 22, 21, 20, 19},
+                    {13, 14, 15, 16, 17, 18},
+                    {12, 11, 10, 9, 8, 7},
+                     {1,  2,  3, 4, 5, 6}};
 
     public SnakesAndLadders() throws IOException {
         frame = new JFrame("Snakes and Ladders");
@@ -80,9 +80,12 @@ public class SnakesAndLadders implements ActionListener {
         btn_start = new JButton("Start");
         btn_start.addActionListener(this);
 
-        gamePanel =  new JPanel();  gameNorth  =  new JPanel();
-        gameWest  =  new JPanel();  gameCenter =  new JPanel();
-        gameEast  =  new JPanel();  gameSouth  =  new JPanel();
+        gamePanel = new JPanel();
+        gameNorth = new JPanel();
+        gameWest = new JPanel();
+        gameCenter = new JPanel();
+        gameEast = new JPanel();
+        gameSouth = new JPanel();
 
         gameCenter.setLayout(new GridLayout(6, 6));
         gamePanel.setLayout(new BorderLayout());
@@ -97,20 +100,19 @@ public class SnakesAndLadders implements ActionListener {
         label1.setIcon(player1);
         label2.setIcon(player2);
 
-        for (int row = 0; row < 6; row++){
-            for(int column = 0; column < 6; column++){
-                boardTiles[row][column] = new JButton();
-                path = game[row][column];
-                string = Integer.toString(path);
-                boardTileImage[row][column] = new ImageIcon("Images/" + string + ".jpg");
-                boardTiles[row][column].setIcon(boardTileImage[row][column]);
-                gameCenter.add(boardTiles[row][column]);
+        for (int row = 0; row < 6; row++) {
+            for (int column = 0; column < 6; column++) {
+                board[row][column] = new JButton();
+                boardPath = game[row][column];
+                nr = Integer.toString(boardPath);
+                boardImage[row][column] = new ImageIcon("Images/" + nr + ".jpg");
+                board[row][column].setIcon(boardImage[row][column]);
+                gameCenter.add(board[row][column]);
             }
         }
 
-        string = Integer.toString(1);
-        diceIcon1 = new ImageIcon("Images/Dice/Dice" + string + ".jpg");
-        diceIcon2 = new ImageIcon("Images/Dice/Dice" + string + ".jpg");
+        diceIcon1 = new ImageIcon("Images/Dice/dice.gif");
+        diceIcon2 = new ImageIcon("Images/Dice/dice.gif");
         dice1.setIcon(diceIcon1);
         dice2.setIcon(diceIcon2);
 
@@ -125,17 +127,19 @@ public class SnakesAndLadders implements ActionListener {
         gameNorth.add(btn_start);
         gameNorth.add(btn_restart);
 
-        gamePanel.add(gameCenter, BorderLayout.CENTER); gamePanel.add(gameWest,  BorderLayout.WEST);
-        gamePanel.add(gameNorth,  BorderLayout.NORTH);  gamePanel.add(gameSouth, BorderLayout.SOUTH);
-        gamePanel.add(gameEast,   BorderLayout.EAST);
+        gamePanel.add(gameCenter, BorderLayout.CENTER);
+        gamePanel.add(gameWest, BorderLayout.WEST);
+        gamePanel.add(gameNorth, BorderLayout.NORTH);
+        gamePanel.add(gameSouth, BorderLayout.SOUTH);
+        gamePanel.add(gameEast, BorderLayout.EAST);
 
         tab.addTab("Snakes & Ladders", gamePanel);
     }
 
-    void aboutPage(){
+    void aboutPage() {
         aboutPanel = new JPanel();
         aboutPanel.setLayout(new BorderLayout());
-        tab.addTab("About",aboutPanel);
+        tab.addTab("About", aboutPanel);
     }
 
     void helpPage() throws IOException {
@@ -151,98 +155,123 @@ public class SnakesAndLadders implements ActionListener {
 
     int throwDice(JLabel die) {
         int dice_throw = Dice.Roll();
-        string = Integer.toString(dice_throw);
-        diceIcon1 = new ImageIcon("Images/Dice/Dice" + string + ".jpg");
+        nr = Integer.toString(dice_throw);
+        diceIcon1 = new ImageIcon("Images/Dice/dice" + nr + ".png");
         die.setIcon(diceIcon1);
         return dice_throw;
     }
 
     void startingPlayer() {
-       Random randomNo = new Random();
-       int n = randomNo.nextInt(3);
+        Random randomNo = new Random();
+        int n = randomNo.nextInt(3);
 
-       if(n == 0){
+        if (n==0) {
             startingPlayer();
-       }
+        }
 
-       if(n == 1){
-        btn_player1.setEnabled(true);
-        btn_player2.setEnabled(false);
-       }
-       else if(n == 2){
-           btn_player2.setEnabled(true);
-           btn_player1.setEnabled(false);
-       }
+        if (n==1) {
+            btn_player1.setEnabled(true);
+            btn_player2.setEnabled(false);
+        } else if (n==2) {
+            btn_player2.setEnabled(true);
+            btn_player1.setEnabled(false);
+        }
 
     }
 
-    void travel(Icon player, int n) throws InterruptedException {
-        int i;
-        int j = 0;
-        boolean stop = false;
 
-        if (!gameOver) {
-            reDrawBoard();
-            for (i = 0; i < 6; i++) {
-                for (j = 0; j < 6; j++) {
-                    if (n == game[i][j]){
-                        stop = true;
-                        break;
-                    }
-                }
-                if(stop){
-                    break;
+    void travel(Icon player, int n) {
+        int x, y;
+        boolean foundPlace = false;
+        for(int i = 0; i < 6; i++){
+            for(int j = 0; j < 6; j++){
+                if(n == game[i][j]) {
+                    board[i][j].setIcon(player);
                 }
             }
-            if (stop){
-            boardTiles[i][j].setIcon(player);
+        }
+
+    }
+
+    void drawBoard() {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                board[i][j].setIcon(boardImage[i][j]);
             }
         }
     }
 
-    void reDrawBoard(){
-        for (int i = 0; i < 6; i++){
-            for(int j = 0; j < 6; j++ ){
-                boardTiles[i][j].setIcon(boardTileImage[i][j]);
+    void redraw(int last_position){
+        int x, y;
+        boolean foundPlace = false;
+        for(int i = 0; i < 6; i++){
+            for(int j = 0; j < 6; j++){
+                if(last_position == game[i][j]) {
+                    board[i][j].setIcon(boardImage[i][j]);
+                }
             }
         }
+
+    }
+
+    void resetDice() {
+        diceIcon1 = new ImageIcon("Images/Dice/dice.gif");
+        diceIcon2 = new ImageIcon("Images/Dice/dice.gif");
+        dice1.setIcon(diceIcon1);
+        dice2.setIcon(diceIcon2);
+    }
+
+    void move(Icon player, int position, int lastPosition){
+        int diceValue = getDiceValue();
+            travel(player,position);
+            redraw(lastPosition);
+    }
+
+
+    int getDiceValue() {
+        int dice1_value, dice2_value, total_diceValue;
+        dice1_value = throwDice(this.dice1);
+        dice2_value = throwDice(this.dice2);
+        total_diceValue = dice1_value + dice2_value;
+
+        return total_diceValue;
     }
 
     public void actionPerformed(ActionEvent event) {
-        int dice1_value, dice2_value, total_diceValue;
+        int diceValue, player1_lastPosition, player2_lastPosition;
         try {
-            if  (event.getSource()==btn_player1){
-                dice1_value = throwDice(this.dice1);
-                dice2_value = throwDice(this.dice2);
-                total_diceValue = dice1_value + dice2_value;
-                player1_position = player1_position + total_diceValue;
+            if (event.getSource()==btn_player1) {
+                diceValue = getDiceValue();
+                player1_position += diceValue;
+                player1_lastPosition = player1_position - diceValue;
 
-                travel(player1, player1_position);
+                move(player1, player1_position, player1_lastPosition);
+
                 btn_player1.setEnabled(false);
                 btn_player2.setEnabled(true);
-            }
-            else if (event.getSource() == btn_player2){
-                dice1_value = throwDice(this.dice1);
-                dice2_value = throwDice(this.dice2);
-
-                total_diceValue = dice1_value + dice2_value;
-                player2_position = player2_position + total_diceValue;
-
+            } else if (event.getSource()==btn_player2) {
+                diceValue = getDiceValue();
+                player2_position = player2_position + diceValue;
+                player2_lastPosition = player2_position - diceValue;
                 travel(player2, player2_position);
+                redraw(player2_lastPosition);
                 btn_player1.setEnabled(true);
                 btn_player2.setEnabled(false);
-            }
-            else if (event.getSource()==btn_start){
+            } else if (event.getSource()==btn_start) {
+                player1_position = 0;
+                player2_position = 0;
+
                 btn_start.setEnabled(false);
                 btn_restart.setEnabled(true);
                 startingPlayer();
-            }
-            else if (event.getSource() == btn_restart){
+            } else if (event.getSource()==btn_restart) {
                 player1_position = 0;
                 player2_position = 0;
-                reDrawBoard();
+                drawBoard();
+                resetDice();
+                gameOver = false;
             }
-        } catch (Exception button){
+        } catch (Exception button) {
             System.out.println("Error in BUTTON:" + button);
         }
     }
