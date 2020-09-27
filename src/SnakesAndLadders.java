@@ -31,6 +31,7 @@ public class SnakesAndLadders implements ActionListener {
     JButton btn_start, btn_restart, btn_player1, btn_player2;
     String nr;
     int boardPath;
+    int clickCounter;
     int player1_position, player2_position;
     boolean gameOver;
 
@@ -38,8 +39,8 @@ public class SnakesAndLadders implements ActionListener {
                     {25, 26, 27, 28, 29, 30},
                     {24, 23, 22, 21, 20, 19},
                     {13, 14, 15, 16, 17, 18},
-                    {12, 11, 10, 9, 8, 7},
-                     {1,  2,  3, 4, 5, 6}};
+                    {12, 11, 10,  9,  8,  7},
+                    { 1,  2,  3,  4,  5,  6}};
 
     public SnakesAndLadders() throws IOException {
         frame = new JFrame("Snakes and Ladders");
@@ -80,12 +81,9 @@ public class SnakesAndLadders implements ActionListener {
         btn_start = new JButton("Start");
         btn_start.addActionListener(this);
 
-        gamePanel = new JPanel();
-        gameNorth = new JPanel();
-        gameWest = new JPanel();
-        gameCenter = new JPanel();
-        gameEast = new JPanel();
-        gameSouth = new JPanel();
+        gamePanel = new JPanel();gameNorth = new JPanel();
+        gameWest = new JPanel(); gameCenter = new JPanel();
+        gameEast = new JPanel(); gameSouth = new JPanel();
 
         gameCenter.setLayout(new GridLayout(6, 6));
         gamePanel.setLayout(new BorderLayout());
@@ -172,9 +170,19 @@ public class SnakesAndLadders implements ActionListener {
         if (n==1) {
             btn_player1.setEnabled(true);
             btn_player2.setEnabled(false);
+
+            board[5][0].setIcon(player1);
+            player1_position = 1;
+            player2_position = 0;
+            clickCounter = 0;
         } else if (n==2) {
             btn_player2.setEnabled(true);
             btn_player1.setEnabled(false);
+
+            board[5][0].setIcon(player2);
+            player1_position = 0;
+            player2_position = 1;
+            clickCounter = 0;
         }
 
     }
@@ -189,6 +197,23 @@ public class SnakesAndLadders implements ActionListener {
                     board[i][j].setIcon(player);
                 }
             }
+        }
+
+        if(n == 12) {
+            btn_player2.setEnabled(false);
+            btn_player1.setEnabled(false);
+            board[0][4].addActionListener(e -> travel(player, 20));
+
+        }
+        if(n == 5){
+            btn_player2.setEnabled(false);
+            btn_player1.setEnabled(false);
+            board[5][4].addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    travel(player,23);
+                }
+            });
         }
 
     }
@@ -222,7 +247,6 @@ public class SnakesAndLadders implements ActionListener {
     }
 
     void move(Icon player, int position, int lastPosition){
-        int diceValue = getDiceValue();
             travel(player,position);
             redraw(lastPosition);
     }
@@ -241,35 +265,48 @@ public class SnakesAndLadders implements ActionListener {
         int diceValue, player1_lastPosition, player2_lastPosition;
         try {
             if (event.getSource()==btn_player1) {
+                clickCounter++;
+                btn_restart.setEnabled(true);
+
                 diceValue = getDiceValue();
                 player1_position += diceValue;
                 player1_lastPosition = player1_position - diceValue;
-
                 move(player1, player1_position, player1_lastPosition);
-
+                if (clickCounter==1) {
+                    board[5][0].setIcon(player2);
+                } else {
+                    board[5][0].setIcon(boardImage[5][0]);
+                }
                 btn_player1.setEnabled(false);
                 btn_player2.setEnabled(true);
             } else if (event.getSource()==btn_player2) {
+                clickCounter++;
+                btn_restart.setEnabled(true);
+
+
                 diceValue = getDiceValue();
                 player2_position = player2_position + diceValue;
                 player2_lastPosition = player2_position - diceValue;
-                travel(player2, player2_position);
-                redraw(player2_lastPosition);
+                move(player2, player2_position, player2_lastPosition);
+
+                if (clickCounter==1) {
+                    board[5][0].setIcon(player1);
+                } else {
+                    board[5][0].setIcon(boardImage[5][0]);
+                }
+
                 btn_player1.setEnabled(true);
                 btn_player2.setEnabled(false);
             } else if (event.getSource()==btn_start) {
-                player1_position = 0;
-                player2_position = 0;
-
                 btn_start.setEnabled(false);
                 btn_restart.setEnabled(true);
                 startingPlayer();
             } else if (event.getSource()==btn_restart) {
-                player1_position = 0;
-                player2_position = 0;
+                btn_restart.setEnabled(false);
+                gameOver = false;
                 drawBoard();
                 resetDice();
-                gameOver = false;
+                startingPlayer();
             }
         } catch (Exception button) {
             System.out.println("Error in BUTTON:" + button);
