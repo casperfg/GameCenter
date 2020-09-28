@@ -63,6 +63,7 @@ public class SnakesAndLadders implements ActionListener {
         dice1 = new JLabel();
         dice2 = new JLabel();
 
+
         gamePage();
         aboutPage();
         helpPage();
@@ -78,7 +79,6 @@ public class SnakesAndLadders implements ActionListener {
         btn_restart = new JButton("Restart");
         btn_restart.setEnabled(false);
         btn_restart.addActionListener(this);
-
         btn_start = new JButton("Start");
         btn_start.addActionListener(this);
 
@@ -111,13 +111,12 @@ public class SnakesAndLadders implements ActionListener {
         dice1.setIcon(diceIcon1);
         dice2.setIcon(diceIcon2);
 
+        gameSouth.add(btn_start);
         gameSouth.add(btn_player1);
         gameSouth.add(dice1);
         gameSouth.add(dice2);
         gameSouth.add(btn_player2);
-
-        gameNorth.add(btn_start);
-        gameNorth.add(btn_restart);
+        gameSouth.add(btn_restart);
 
         gamePanel.add(gameCenter, BorderLayout.CENTER);
         gamePanel.add(gameNorth, BorderLayout.NORTH);
@@ -360,7 +359,7 @@ public class SnakesAndLadders implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         int totalDiceValue, diceValue1, diceValue2;
         try {
-            if (event.getSource()==btn_player1) {
+            if (event.getSource() == btn_player1) {
                 clickCounter++;
                 btn_restart.setEnabled(true);
 
@@ -376,7 +375,7 @@ public class SnakesAndLadders implements ActionListener {
                 checkEqualDice(diceValue1, diceValue2, btn_player1, btn_player2);
 
                 checkIfLadderOrSnake(player1_position);
-            } else if (event.getSource()==btn_player2) {
+            } else if (event.getSource() == btn_player2) {
                 clickCounter++;
                 btn_restart.setEnabled(true);
 
@@ -392,11 +391,12 @@ public class SnakesAndLadders implements ActionListener {
                 checkEqualDice(diceValue1, diceValue2, btn_player2, btn_player1);
                 checkIfLadderOrSnake(player2_position);
 
-            } else if (event.getSource()==btn_start) {
+            } else if (event.getSource() == btn_start) {
                 btn_start.setEnabled(false);
                 btn_restart.setEnabled(true);
                 startingPlayer();
             } else if (event.getSource()==btn_restart) {
+
                 btn_restart.setEnabled(false);
                 gameOver = false;
                 drawBoard();
