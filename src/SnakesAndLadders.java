@@ -20,31 +20,32 @@ import javax.swing.JTextArea;
 public class SnakesAndLadders implements ActionListener {
     final JFrame frame;
     final JTabbedPane tab;
-    JPanel gamePanel, aboutPanel, helpPanel;
-    JPanel gameCenter, gameEast, gameWest, gameNorth, gameSouth;
 
-    final JLabel dice1;
-    final JLabel dice2;
-    Icon diceIcon1, diceIcon2, player1, player2;
-    final Icon[][] boardImage = new Icon[6][6];
-    final JButton[][] board = new JButton[6][6];
+    JPanel gamePanel, aboutPanel, helpPanel, gameCENTER, gameNORTH, gameSOUTH;
 
-    JButton btn_start;
-    JButton btn_restart;
-    final JButton btn_player1;
-    final JButton btn_player2;
-    String nr;
-    int boardPath;
-    int clickCounter;
-    int player1_position, player2_position, player1_lastPosition, player2_lastPosition;
+    JLabel diceLabel1, diceLabel2;
+
+    JButton btn_start, btn_restart,
+            btn_player1, btn_player2;
+
+    Icon diceIcon1, diceIcon2, player1Right, player2Right, player1Left, player2Left;
+
+
+    Icon[][] boardImage = new Icon[6][6];
+    Icon[][] winScreen = new Icon[6][6];
+    JButton[][] board = new JButton[6][6];
+
+    String blockNr;
+    int clickCounter, player1_position, player2_position,
+            player1_lastPosition, player2_lastPosition;
     boolean gameOver;
 
-    final int[][] game = {{36, 35, 34, 33, 32, 31},
-                    {25, 26, 27, 28, 29, 30},
-                    {24, 23, 22, 21, 20, 19},
-                    {13, 14, 15, 16, 17, 18},
-                    {12, 11, 10,  9,  8,  7},
-                    { 1,  2,  3,  4,  5,  6}};
+    final int[][] game = {{36, 35, 34, 33, 32, 31},             //left
+                          {25, 26, 27, 28, 29, 30},             //right
+                          {24, 23, 22, 21, 20, 19},             //left
+                          {13, 14, 15, 16, 17, 18},             //right
+                          {12, 11, 10,  9,  8,  7},             //left
+                          { 1,  2,  3,  4,  5,  6}};            //right
 
     public SnakesAndLadders() throws IOException {
         frame = new JFrame("Snakes and Ladders");
@@ -60,11 +61,11 @@ public class SnakesAndLadders implements ActionListener {
         btn_player2.addActionListener(this);
         btn_player2.setEnabled(false);
 
-        dice1 = new JLabel();
-        dice2 = new JLabel();
+        diceLabel1 = new JLabel();
+        diceLabel2 = new JLabel();
 
 
-        gamePage();
+        gamePage1();
         aboutPage();
         helpPage();
 
@@ -75,54 +76,61 @@ public class SnakesAndLadders implements ActionListener {
         frame.setLocationRelativeTo(null);
     }
 
-    void gamePage() {
+
+    void gamePage1() {
         btn_restart = new JButton("Restart");
         btn_restart.setEnabled(false);
         btn_restart.addActionListener(this);
         btn_start = new JButton("Start");
         btn_start.addActionListener(this);
 
-        gamePanel = new JPanel();gameNorth = new JPanel();
-        gameWest = new JPanel(); gameCenter = new JPanel();
-        gameEast = new JPanel(); gameSouth = new JPanel();
+        gamePanel = new JPanel();
+        gameNORTH = new JPanel();
+        gameCENTER = new JPanel();
+        gameSOUTH = new JPanel();
 
-        gameCenter.setLayout(new GridLayout(6, 6));
+        gameCENTER.setLayout(new GridLayout(6, 6));
         gamePanel.setLayout(new BorderLayout());
-        gameNorth.setLayout(new GridLayout(1, 2));
-        gameSouth.setLayout(new FlowLayout());
+        gameNORTH.setLayout(new GridLayout(1, 2));
+        gameSOUTH.setLayout(new FlowLayout());
 
-        player1 = new ImageIcon("Images/player1.gif");
-        player2 = new ImageIcon("Images/player2.gif");
+        player1Right = new ImageIcon("Images/player1.gif");
+        player2Right = new ImageIcon("Images/player2.gif");
+        player1Left = new ImageIcon("Images/player1Left.gif");
+        player2Left = new ImageIcon("Images/player2Left.gif");
 
-        for (int row = 0; row < 6; row++) {
-            for (int column = 0; column < 6; column++) {
-                board[row][column] = new JButton();
-                boardPath = game[row][column];
-                nr = Integer.toString(boardPath);
-                boardImage[row][column] = new ImageIcon("Images/" + nr + ".jpg");
-                board[row][column].setIcon(boardImage[row][column]);
-                gameCenter.add(board[row][column]);
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                board[i][j] = new JButton();
+
+                blockNr = Integer.toString(game[i][j]);
+                boardImage[i][j] = new ImageIcon("Images/" + blockNr + ".jpg");
+
+                board[i][j].setIcon(boardImage[i][j]);
+
+                gameCENTER.add(board[i][j]);
             }
         }
 
         diceIcon1 = new ImageIcon("Images/Dice/Dice1.jpg");
         diceIcon2 = new ImageIcon("Images/Dice/Dice3.jpg");
 
-        dice1.setIcon(diceIcon1);
-        dice2.setIcon(diceIcon2);
+        diceLabel1.setIcon(diceIcon1);
+        diceLabel2.setIcon(diceIcon2);
 
-        gameSouth.add(btn_start);
-        gameSouth.add(btn_player1);
-        gameSouth.add(dice1);
-        gameSouth.add(dice2);
-        gameSouth.add(btn_player2);
-        gameSouth.add(btn_restart);
 
-        gamePanel.add(gameCenter, BorderLayout.CENTER);
-        gamePanel.add(gameNorth, BorderLayout.NORTH);
-        gamePanel.add(gameSouth, BorderLayout.SOUTH);
+        gameSOUTH.add(btn_start);
+        gameSOUTH.add(btn_player1);
+        gameSOUTH.add(diceLabel1);
+        gameSOUTH.add(diceLabel2);
+        gameSOUTH.add(btn_player2);
+        gameSOUTH.add(btn_restart);
 
-        tab.addTab("Snakes & Ladders", gamePanel);
+        gamePanel.add(gameCENTER, BorderLayout.CENTER);
+        gamePanel.add(gameNORTH, BorderLayout.NORTH);
+        gamePanel.add(gameSOUTH, BorderLayout.SOUTH);
+
+        tab.addTab("Game", gamePanel);
     }
 
     void aboutPage() {
@@ -144,8 +152,8 @@ public class SnakesAndLadders implements ActionListener {
 
     int throwDice(JLabel die) {
         int dice_throw = Dice.Roll();
-        nr = Integer.toString(dice_throw);
-        diceIcon1 = new ImageIcon("Images/Dice/Dice" + nr + ".jpg");
+        blockNr = Integer.toString(dice_throw);
+        diceIcon1 = new ImageIcon("Images/Dice/Dice" + blockNr + ".jpg");
         die.setIcon(diceIcon1);
         return dice_throw;
     }
@@ -162,7 +170,7 @@ public class SnakesAndLadders implements ActionListener {
             btn_player1.setEnabled(true);
             btn_player2.setEnabled(false);
 
-            board[5][0].setIcon(player1);
+            board[5][0].setIcon(player1Right);
             player1_position = 1;
             player2_position = 0;
             clickCounter = 0;
@@ -170,7 +178,7 @@ public class SnakesAndLadders implements ActionListener {
             btn_player2.setEnabled(true);
             btn_player1.setEnabled(false);
 
-            board[5][0].setIcon(player2);
+            board[5][0].setIcon(player2Right);
             player1_position = 0;
             player2_position = 1;
             clickCounter = 0;
@@ -178,12 +186,20 @@ public class SnakesAndLadders implements ActionListener {
 
     }
 
-
-    void travel(Icon player, int n) {
+    void travel(Icon player, int n) throws InterruptedException {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 if (n==game[i][j]) {
-                    board[i][j].setIcon(player);
+                    Thread.sleep(200);
+                    if(i % 2 == 0){
+                        if(player == player1Right)
+                            board[i][j].setIcon(player1Left);
+                        else if (player == player2Right)
+                            board[i][j].setIcon(player2Left);
+                    }
+                    else
+                        board[i][j].setIcon(player);
+
                 }
             }
         }
@@ -194,7 +210,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player1_position = 23;
-                    board[2][1].setIcon(player1);
+                    board[2][1].setIcon(player1Right);
                     player1_lastPosition = 12;
                     board[4][0].removeActionListener(this);
                     board[4][0].setIcon(boardImage[4][0]);
@@ -207,7 +223,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player2_position = 23;
-                    board[4][0].setIcon(player2);
+                    board[2][1].setIcon(player2Right);
                     player2_lastPosition = 12;
                     board[4][0].removeActionListener(this);
                     board[4][0].setIcon(boardImage[4][0]);
@@ -220,7 +236,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player1_position = 20;
-                    board[2][4].setIcon(player1);
+                    board[2][4].setIcon(player1Right);
                     player1_lastPosition = 17;
                     board[3][4].removeActionListener(this);
                     board[3][4].setIcon(boardImage[3][4]);
@@ -233,7 +249,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player2_position = 20;
-                    board[2][4].setIcon(player2);
+                    board[2][4].setIcon(player2Right);
                     player2_lastPosition = 17;
                     board[3][4].removeActionListener(this);
                     board[3][4].setIcon(boardImage[3][4]);
@@ -248,7 +264,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player1_position = 2;
-                    board[5][1].setIcon(player1);
+                    board[5][1].setIcon(player1Right);
                     player1_lastPosition = 16;
                     board[3][3].removeActionListener(this);
                     board[3][3].setIcon(boardImage[3][3]);
@@ -261,7 +277,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player2_position = 2;
-                    board[5][1].setIcon(player2);
+                    board[5][1].setIcon(player2Right);
                     player2_lastPosition = 16;
                     board[3][3].removeActionListener(this);
                     board[3][3].setIcon(boardImage[3][3]);
@@ -274,7 +290,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player1_position = 19;
-                    board[2][5].setIcon(player1);
+                    board[2][5].setIcon(player1Right);
                     player1_lastPosition = 16;
                     board[0][3].removeActionListener(this);
                     board[0][3].setIcon(boardImage[0][3]);
@@ -287,13 +303,35 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player2_position = 19;
-                    board[2][5].setIcon(player2);
+                    board[2][5].setIcon(player2Right);
                     player2_lastPosition = 33;
                     board[0][3].removeActionListener(this);
                     board[0][3].setIcon(boardImage[0][3]);
                     btn_player1.setEnabled(true);
                 }
             });
+        }
+
+        if(player1_position > 36)
+        {
+           player1_position = backTrack(player1Right, player1_position);
+
+            travel(player1Right, player1_position);
+            redraw(player1_lastPosition);
+            System.out.println("Player 1 pos: " + player1_position);
+            System.out.println("Player 1 last pos: " + player1_lastPosition);
+        }
+
+        if (player2_position > 36){
+
+            travel(player2Right, player2_position);
+            player2_position = backTrack(player2Right, player2_position);
+            System.out.println("Player 2 pos: " + player2_position);
+            System.out.println("Player 2 last pos : " + player2_lastPosition);
+        }
+
+        if(player1_position == 36 || player2_position == 36){
+            gameOver = true;
         }
     }
 
@@ -309,7 +347,14 @@ public class SnakesAndLadders implements ActionListener {
         for(int i = 0; i < 6; i++){
             for(int j = 0; j < 6; j++){
                 if(last_position == game[i][j]) {
-                    board[i][j].setIcon(boardImage[i][j]);
+                    if(player1_lastPosition == player2_position){
+                        board[i][j].setIcon(player2Right);
+                    }
+                    else if(player2_lastPosition == player1_position) {
+                        board[i][j].setIcon(player1Right);
+                    }
+                    else
+                        board[i][j].setIcon(boardImage[i][j]);
                 }
             }
         }
@@ -320,11 +365,24 @@ public class SnakesAndLadders implements ActionListener {
         int dice_thrw = Dice.Roll();
         diceIcon1 = new ImageIcon("Images/Dice/Dice" + dice_thrw + ".jpg");
         diceIcon2 = new ImageIcon("Images/Dice/Dice" + dice_thrw + ".jpg");
-        dice1.setIcon(diceIcon1);
-        dice2.setIcon(diceIcon2);
+        diceLabel1.setIcon(diceIcon1);
+        diceLabel2.setIcon(diceIcon2);
     }
 
-    void move(Icon player, int position, int lastPosition) {
+    int backTrack(Icon player, int position){
+        int difference = position - 36;
+        position = 36 - difference;
+        for(int i = 0; i < 6; i++){
+            for(int j = 0; j < 6; j++){
+                if(position == game[i][j]){
+                    board[i][j].setIcon(player);
+                }
+            }
+        }
+        return position;
+    }
+
+    void move(Icon player, int position, int lastPosition) throws InterruptedException {
             travel(player,position);
             redraw(lastPosition);
     }
@@ -343,10 +401,13 @@ public class SnakesAndLadders implements ActionListener {
     void placePlayerAtStart(Icon player){
         if (clickCounter == 1) {
             board[5][0].setIcon(player);
-        } else {
+        }
+        else {
             board[5][0].setIcon(boardImage[5][0]);
         }
+
     }
+
     void checkIfLadderOrSnake(int player_position){
         if (player_position == 12 || player_position == 17
                 || player_position == 16 || player_position == 33)
@@ -356,6 +417,18 @@ public class SnakesAndLadders implements ActionListener {
         }
     }
 
+    void playerWin(String player){
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                blockNr = Integer.toString(game[i][j]);
+                winScreen[i][j] = new ImageIcon("Images/Win"+ player +"/Win" + blockNr + ".jpg");
+                board[i][j].setIcon(winScreen[i][j]);
+            }
+        }
+        btn_player1.setEnabled(false);
+        btn_player2.setEnabled(false);
+    }
+
     public void actionPerformed(ActionEvent event) {
         int totalDiceValue, diceValue1, diceValue2;
         try {
@@ -363,40 +436,46 @@ public class SnakesAndLadders implements ActionListener {
                 clickCounter++;
                 btn_restart.setEnabled(true);
 
-                diceValue1 = throwDice(this.dice1);
-                diceValue2 = throwDice(this.dice2);
+                diceValue1 = throwDice(this.diceLabel1);
+                diceValue2 = throwDice(this.diceLabel2);
 
                 totalDiceValue = diceValue1 + diceValue2;
+                System.out.println("Dice:" + totalDiceValue);
                 player1_position += totalDiceValue;
                 player1_lastPosition = player1_position - totalDiceValue;
-                move(player1, player1_position, player1_lastPosition);
+                move(player1Right, player1_position, player1_lastPosition);
 
-                placePlayerAtStart(player2);
+                placePlayerAtStart(player2Right);
                 checkEqualDice(diceValue1, diceValue2, btn_player1, btn_player2);
-
                 checkIfLadderOrSnake(player1_position);
+                if(gameOver)
+                    playerWin("Player1");
             } else if (event.getSource() == btn_player2) {
                 clickCounter++;
                 btn_restart.setEnabled(true);
 
-                diceValue1 = throwDice(this.dice1);
-                diceValue2 = throwDice(this.dice2);
+                diceValue1 = throwDice(this.diceLabel1);
+                diceValue2 = throwDice(this.diceLabel2);
 
                 totalDiceValue = diceValue1 + diceValue2;
+                System.out.println("Dice:" + totalDiceValue);
                 player2_position = player2_position + totalDiceValue;
                 player2_lastPosition = player2_position - totalDiceValue;
-                move(player2, player2_position, player2_lastPosition);
+                move(player2Right, player2_position, player2_lastPosition);
 
-                placePlayerAtStart(player1);
+                placePlayerAtStart(player1Right);
                 checkEqualDice(diceValue1, diceValue2, btn_player2, btn_player1);
                 checkIfLadderOrSnake(player2_position);
 
+                if(gameOver){
+                    playerWin("Player2");
+                }
             } else if (event.getSource() == btn_start) {
+                gameOver = false;
                 btn_start.setEnabled(false);
                 btn_restart.setEnabled(true);
                 startingPlayer();
             } else if (event.getSource()==btn_restart) {
-
                 btn_restart.setEnabled(false);
                 gameOver = false;
                 drawBoard();
