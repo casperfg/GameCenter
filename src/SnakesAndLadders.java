@@ -210,7 +210,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player1_position = 23;
-                    board[2][1].setIcon(player1Right);
+                    board[2][1].setIcon(player1Left);
                     player1_lastPosition = 12;
                     board[4][0].removeActionListener(this);
                     board[4][0].setIcon(boardImage[4][0]);
@@ -223,7 +223,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player2_position = 23;
-                    board[2][1].setIcon(player2Right);
+                    board[2][1].setIcon(player2Left);
                     player2_lastPosition = 12;
                     board[4][0].removeActionListener(this);
                     board[4][0].setIcon(boardImage[4][0]);
@@ -236,7 +236,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player1_position = 20;
-                    board[2][4].setIcon(player1Right);
+                    board[2][4].setIcon(player1Left);
                     player1_lastPosition = 17;
                     board[3][4].removeActionListener(this);
                     board[3][4].setIcon(boardImage[3][4]);
@@ -249,7 +249,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player2_position = 20;
-                    board[2][4].setIcon(player2Right);
+                    board[2][4].setIcon(player2Left);
                     player2_lastPosition = 17;
                     board[3][4].removeActionListener(this);
                     board[3][4].setIcon(boardImage[3][4]);
@@ -290,7 +290,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player1_position = 19;
-                    board[2][5].setIcon(player1Right);
+                    board[2][5].setIcon(player1Left);
                     player1_lastPosition = 16;
                     board[0][3].removeActionListener(this);
                     board[0][3].setIcon(boardImage[0][3]);
@@ -303,7 +303,7 @@ public class SnakesAndLadders implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     player2_position = 19;
-                    board[2][5].setIcon(player2Right);
+                    board[2][5].setIcon(player2Left);
                     player2_lastPosition = 33;
                     board[0][3].removeActionListener(this);
                     board[0][3].setIcon(boardImage[0][3]);
@@ -316,16 +316,18 @@ public class SnakesAndLadders implements ActionListener {
         {
            player1_position = backTrack(player1Right, player1_position);
 
-            travel(player1Right, player1_position);
-            redraw(player1_lastPosition);
+
+            move(player1Right, player1_position, player1_lastPosition);
             System.out.println("Player 1 pos: " + player1_position);
             System.out.println("Player 1 last pos: " + player1_lastPosition);
         }
 
         if (player2_position > 36){
-
-            travel(player2Right, player2_position);
             player2_position = backTrack(player2Right, player2_position);
+
+            move(player2Right, player2_position, player2_lastPosition);
+
+
             System.out.println("Player 2 pos: " + player2_position);
             System.out.println("Player 2 last pos : " + player2_lastPosition);
         }
@@ -348,10 +350,21 @@ public class SnakesAndLadders implements ActionListener {
             for(int j = 0; j < 6; j++){
                 if(last_position == game[i][j]) {
                     if(player1_lastPosition == player2_position){
-                        board[i][j].setIcon(player2Right);
+                        if(i % 2 == 0)
+                        {
+                            board[i][j].setIcon(player2Right);
+                        }
+                        else
+                            board[i][j].setIcon(player2Left);
                     }
                     else if(player2_lastPosition == player1_position) {
-                        board[i][j].setIcon(player1Right);
+                        if(i % 2 == 0)
+                        {
+                            board[i][j].setIcon(player1Right);
+                        }
+                        else
+                            board[i][j].setIcon(player1Left);
+
                     }
                     else
                         board[i][j].setIcon(boardImage[i][j]);
