@@ -30,14 +30,16 @@ public class SnakesAndLadders implements ActionListener {
 
     Icon diceIcon1, diceIcon2, player1Right, player2Right, player1Left, player2Left;
 
-
     Icon[][] boardImage = new Icon[6][6];
     Icon[][] winScreen = new Icon[6][6];
     JButton[][] board = new JButton[6][6];
 
     String blockNr;
+
     int clickCounter, player1_position, player2_position,
             player1_lastPosition, player2_lastPosition;
+
+    int totalDiceValue, diceValue1, diceValue2;
     boolean gameOver;
 
     final int[][] game = {{36, 35, 34, 33, 32, 31},             //left
@@ -133,6 +135,27 @@ public class SnakesAndLadders implements ActionListener {
         tab.addTab("Game", gamePanel);
     }
 
+    int throwDice(JLabel die) {
+        int dice_throw = Dice.Roll();
+        blockNr = Integer.toString(dice_throw);
+        diceIcon1 = new ImageIcon("Images/Dice/Dice" + blockNr + ".jpg");
+        die.setIcon(diceIcon1);
+        return dice_throw;
+    }
+
+    int backTrack(Icon player, int position){
+        int difference = position - 36;
+        position = 36 - difference;
+        for(int i = 0; i < 6; i++){
+            for(int j = 0; j < 6; j++){
+                if(position == game[i][j]){
+                    board[i][j].setIcon(player);
+                }
+            }
+        }
+        return position;
+    }
+
     void aboutPage() {
         aboutPanel = new JPanel();
         aboutPanel.setLayout(new BorderLayout());
@@ -150,14 +173,6 @@ public class SnakesAndLadders implements ActionListener {
         tab.addTab("Help", helpPanel);
     }
 
-    int throwDice(JLabel die) {
-        int dice_throw = Dice.Roll();
-        blockNr = Integer.toString(dice_throw);
-        diceIcon1 = new ImageIcon("Images/Dice/Dice" + blockNr + ".jpg");
-        die.setIcon(diceIcon1);
-        return dice_throw;
-    }
-
     void startingPlayer() {
         Random randomNo = new Random();
         int n = randomNo.nextInt(3);
@@ -172,18 +187,117 @@ public class SnakesAndLadders implements ActionListener {
 
             board[5][0].setIcon(player1Right);
             player1_position = 1;
-            player2_position = 0;
+            player2_position = 1;
             clickCounter = 0;
         } else if (n==2) {
             btn_player2.setEnabled(true);
             btn_player1.setEnabled(false);
 
             board[5][0].setIcon(player2Right);
-            player1_position = 0;
+            player1_position = 1;
             player2_position = 1;
             clickCounter = 0;
         }
 
+    }
+
+    void drawBoard() {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                board[i][j].setIcon(boardImage[i][j]);
+            }
+        }
+    }
+
+    void redraw(int last_position){
+        for(int i = 0; i < 6; i++){
+            for(int j = 0; j < 6; j++){
+                if(last_position == game[i][j]) {
+                    if(player1_lastPosition == player2_position){
+                       if(i % 2 == 0 && i != 0) {
+                            board[i][j].setIcon(player2Right);
+                        }
+                        else
+                            board[i][j].setIcon(player2Left);
+                    }
+
+                    if(player2_lastPosition == player1_position) {
+                        if(i % 2 == 0 && i != 0) {
+                            board[i][j].setIcon(player1Right);
+                        }
+                        else
+                            board[i][j].setIcon(player1Left);
+                    }
+                    else
+                        board[i][j].setIcon(boardImage[i][j]);
+                }
+            }
+        }
+
+    }
+
+    void move(Icon player, int position, int lastPosition) throws InterruptedException {
+            travel(player,position);
+            if(position != lastPosition){
+            redraw(lastPosition);
+            }
+    }
+
+    void checkEqualDice(int die1, int die2, JButton btn1, JButton btn2){
+        if (die1 == die2){
+            btn1.setEnabled(true);
+            btn2.setEnabled(false);
+        }
+        else
+        {
+            btn1.setEnabled(false);
+            btn2.setEnabled(true);
+        }
+    }
+
+    void placePlayerAtStart(Icon player){
+        if (clickCounter == 1) {
+            board[5][0].setIcon(player);
+        }
+        else if (player1_position != 1 && player2_position != 0){
+            board[5][0].setIcon(boardImage[5][0]);
+        }
+
+    }
+
+    void checkIfLadderOrSnake(int player_position){
+        if (player_position == 12 || player_position == 17
+                || player_position == 16 || player_position == 33)
+        {
+            btn_player2.setEnabled(false);
+            btn_player1.setEnabled(false);
+        }
+    }
+
+    void playerWin(String player){
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                blockNr = Integer.toString(game[i][j]);
+                winScreen[i][j] = new ImageIcon("Images/Win"+ player +"/Win" + blockNr + ".jpg");
+                board[i][j].setIcon(winScreen[i][j]);
+            }
+        }
+        btn_player1.setEnabled(false);
+        btn_player2.setEnabled(false);
+    }
+
+    void startGame(){
+        gameOver = false;
+        btn_start.setEnabled(false);
+        btn_restart.setEnabled(true);
+        startingPlayer();
+    }
+
+    void restartGame(){
+        btn_restart.setEnabled(false);
+        gameOver = false;
+        drawBoard();
+        startingPlayer();
     }
 
     void travel(Icon player, int n) throws InterruptedException {
@@ -197,8 +311,9 @@ public class SnakesAndLadders implements ActionListener {
                         else if (player == player2Right)
                             board[i][j].setIcon(player2Left);
                     }
-                    else
+                    else {
                         board[i][j].setIcon(player);
+                    }
 
                 }
             }
@@ -314,136 +429,25 @@ public class SnakesAndLadders implements ActionListener {
 
         if(player1_position > 36)
         {
-           player1_position = backTrack(player1Right, player1_position);
-
-
+            player1_position = backTrack(player1Right, player1_position);
             move(player1Right, player1_position, player1_lastPosition);
-            System.out.println("Player 1 pos: " + player1_position);
-            System.out.println("Player 1 last pos: " + player1_lastPosition);
         }
 
         if (player2_position > 36){
             player2_position = backTrack(player2Right, player2_position);
-
             move(player2Right, player2_position, player2_lastPosition);
-
-
-            System.out.println("Player 2 pos: " + player2_position);
-            System.out.println("Player 2 last pos : " + player2_lastPosition);
         }
 
         if(player1_position == 36 || player2_position == 36){
             gameOver = true;
         }
-    }
-
-    void drawBoard() {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                board[i][j].setIcon(boardImage[i][j]);
-            }
-        }
-    }
-
-    void redraw(int last_position){
-        for(int i = 0; i < 6; i++){
-            for(int j = 0; j < 6; j++){
-                if(last_position == game[i][j]) {
-                    if(player1_lastPosition == player2_position){
-                        if(i % 2 == 0)
-                        {
-                            board[i][j].setIcon(player2Right);
-                        }
-                        else
-                            board[i][j].setIcon(player2Left);
-                    }
-                    else if(player2_lastPosition == player1_position) {
-                        if(i % 2 == 0)
-                        {
-                            board[i][j].setIcon(player1Right);
-                        }
-                        else
-                            board[i][j].setIcon(player1Left);
-
-                    }
-                    else
-                        board[i][j].setIcon(boardImage[i][j]);
-                }
-            }
-        }
-
-    }
-
-    void resetDice() {
-        int dice_thrw = Dice.Roll();
-        diceIcon1 = new ImageIcon("Images/Dice/Dice" + dice_thrw + ".jpg");
-        diceIcon2 = new ImageIcon("Images/Dice/Dice" + dice_thrw + ".jpg");
-        diceLabel1.setIcon(diceIcon1);
-        diceLabel2.setIcon(diceIcon2);
-    }
-
-    int backTrack(Icon player, int position){
-        int difference = position - 36;
-        position = 36 - difference;
-        for(int i = 0; i < 6; i++){
-            for(int j = 0; j < 6; j++){
-                if(position == game[i][j]){
-                    board[i][j].setIcon(player);
-                }
-            }
-        }
-        return position;
-    }
-
-    void move(Icon player, int position, int lastPosition) throws InterruptedException {
-            travel(player,position);
-            redraw(lastPosition);
-    }
-
-    void checkEqualDice(int die1, int die2, JButton btn1, JButton btn2){
-        if (die1 == die2){
-            btn1.setEnabled(true);
-            btn2.setEnabled(false);
-        }
-        else
-        {
-            btn1.setEnabled(false);
-            btn2.setEnabled(true);
-        }
-    }
-    void placePlayerAtStart(Icon player){
-        if (clickCounter == 1) {
-            board[5][0].setIcon(player);
-        }
-        else {
-            board[5][0].setIcon(boardImage[5][0]);
-        }
-
-    }
-
-    void checkIfLadderOrSnake(int player_position){
-        if (player_position == 12 || player_position == 17
-                || player_position == 16 || player_position == 33)
-        {
-            btn_player2.setEnabled(false);
-            btn_player1.setEnabled(false);
-        }
-    }
-
-    void playerWin(String player){
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                blockNr = Integer.toString(game[i][j]);
-                winScreen[i][j] = new ImageIcon("Images/Win"+ player +"/Win" + blockNr + ".jpg");
-                board[i][j].setIcon(winScreen[i][j]);
-            }
-        }
-        btn_player1.setEnabled(false);
-        btn_player2.setEnabled(false);
+        System.out.println("\nPlayer 1 pos: " + player1_position);
+        System.out.println("Player 1 last pos: " + player1_lastPosition);
+        System.out.println("\nPlayer 2 pos: " + player2_position);
+        System.out.println("Player 2 last pos : " + player2_lastPosition);
     }
 
     public void actionPerformed(ActionEvent event) {
-        int totalDiceValue, diceValue1, diceValue2;
         try {
             if (event.getSource() == btn_player1) {
                 clickCounter++;
@@ -453,11 +457,9 @@ public class SnakesAndLadders implements ActionListener {
                 diceValue2 = throwDice(this.diceLabel2);
 
                 totalDiceValue = diceValue1 + diceValue2;
-                System.out.println("Dice:" + totalDiceValue);
                 player1_position += totalDiceValue;
                 player1_lastPosition = player1_position - totalDiceValue;
                 move(player1Right, player1_position, player1_lastPosition);
-
                 placePlayerAtStart(player2Right);
                 checkEqualDice(diceValue1, diceValue2, btn_player1, btn_player2);
                 checkIfLadderOrSnake(player1_position);
@@ -471,7 +473,6 @@ public class SnakesAndLadders implements ActionListener {
                 diceValue2 = throwDice(this.diceLabel2);
 
                 totalDiceValue = diceValue1 + diceValue2;
-                System.out.println("Dice:" + totalDiceValue);
                 player2_position = player2_position + totalDiceValue;
                 player2_lastPosition = player2_position - totalDiceValue;
                 move(player2Right, player2_position, player2_lastPosition);
@@ -483,17 +484,14 @@ public class SnakesAndLadders implements ActionListener {
                 if(gameOver){
                     playerWin("Player2");
                 }
+
+
             } else if (event.getSource() == btn_start) {
-                gameOver = false;
-                btn_start.setEnabled(false);
-                btn_restart.setEnabled(true);
-                startingPlayer();
-            } else if (event.getSource()==btn_restart) {
-                btn_restart.setEnabled(false);
-                gameOver = false;
-                drawBoard();
-                resetDice();
-                startingPlayer();
+                startGame();
+            }
+
+            else if (event.getSource()==btn_restart) {
+               restartGame();
             }
 
         } catch (Exception button) {
@@ -501,3 +499,4 @@ public class SnakesAndLadders implements ActionListener {
         }
     }
 }
+
