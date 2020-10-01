@@ -19,7 +19,7 @@ import javax.swing.JTextArea;
 public class SnakesAndLadders implements ActionListener {
     final JFrame frame;
     final JTabbedPane tab;
-    JPanel gamePanel, aboutPanel, helpPanel, gameCENTER, gameNORTH, gameSOUTH;
+    JPanel gamePanel, helpPanel, gameCENTER, gameNORTH, gameSOUTH;
     JLabel diceLabel1, diceLabel2;
     JButton btn_start, btn_restart, btn_player1, btn_player2, btn_exit,
             btn_resign_player1, btn_resign_player2;
@@ -63,7 +63,6 @@ public class SnakesAndLadders implements ActionListener {
 
 
         gamePage1();
-        aboutPage();
         helpPage();
 
         frame.add(tab, BorderLayout.CENTER);
@@ -162,12 +161,6 @@ public class SnakesAndLadders implements ActionListener {
         return position;
     }
 
-    void aboutPage() {
-        aboutPanel = new JPanel();
-        aboutPanel.setLayout(new BorderLayout());
-        tab.addTab("About", aboutPanel);
-    }
-
     void helpPage() throws IOException {
         helpPanel = new JPanel();
         String text = new String(Files.readAllBytes(Paths.get("help.txt")));
@@ -176,7 +169,7 @@ public class SnakesAndLadders implements ActionListener {
 
         helpPanel.setLayout(new BorderLayout());
         helpPanel.add(tutorial, BorderLayout.CENTER);
-        tab.addTab("Help", helpPanel);
+        tab.addTab("Rules", helpPanel);
     }
 
     void startingPlayer() {
