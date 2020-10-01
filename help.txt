@@ -7,10 +7,14 @@ The object of the game is to navigate one's game piece,
 according to dice rolls, from the start (bottom left square)
 to the finish (top left square).
 
-If you land on the beginning of a ladder you automatically climb to the connecting square,
-however if you land on a snake, you fall down. First player to reach the end wins.
+If you land on the beginning of a ladder climb to the connecting square by
+pressing the block,
+however if you land on a snake, you fall down. First player to reach exactly 36 wins
 
 Press start to begin the game. The player that gets to go first is chosen on random.
 Press your name and watch your piece move to the location according to the dice.
 If you get two identical dice, you get to go again.
 When you land on a ladder, press the tile you landed on to climb.
+
+If you only see one player on the board, that means that both players are
+on the same block. To

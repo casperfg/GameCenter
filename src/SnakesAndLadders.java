@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,14 +19,10 @@ import javax.swing.JTextArea;
 public class SnakesAndLadders implements ActionListener {
     final JFrame frame;
     final JTabbedPane tab;
-
     JPanel gamePanel, aboutPanel, helpPanel, gameCENTER, gameNORTH, gameSOUTH;
-
     JLabel diceLabel1, diceLabel2;
-
-    JButton btn_start, btn_restart,
-            btn_player1, btn_player2;
-
+    JButton btn_start, btn_restart, btn_player1, btn_player2, btn_exit,
+            btn_resign_player1, btn_resign_player2;
     Icon diceIcon1, diceIcon2, player1Right, player2Right, player1Left, player2Left;
 
     Icon[][] boardImage = new Icon[6][6];
@@ -73,7 +68,7 @@ public class SnakesAndLadders implements ActionListener {
 
         frame.add(tab, BorderLayout.CENTER);
         frame.setResizable(false);
-        frame.setSize(675, 810);
+        frame.setSize(675, 790);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
     }
@@ -83,8 +78,19 @@ public class SnakesAndLadders implements ActionListener {
         btn_restart = new JButton("Restart");
         btn_restart.setEnabled(false);
         btn_restart.addActionListener(this);
+
         btn_start = new JButton("Start");
         btn_start.addActionListener(this);
+
+        btn_exit = new JButton("Exit");
+        btn_exit.addActionListener(this);
+
+        btn_resign_player1 = new JButton("Resign player 1");
+        btn_resign_player1.setEnabled(false);
+        btn_resign_player1.addActionListener(this);
+        btn_resign_player2 = new JButton("Resign player 2");
+        btn_resign_player2.setEnabled(false);
+        btn_resign_player2.addActionListener(this);
 
         gamePanel = new JPanel();
         gameNORTH = new JPanel();
@@ -104,12 +110,9 @@ public class SnakesAndLadders implements ActionListener {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 board[i][j] = new JButton();
-
                 blockNr = Integer.toString(game[i][j]);
                 boardImage[i][j] = new ImageIcon("Images/" + blockNr + ".jpg");
-
                 board[i][j].setIcon(boardImage[i][j]);
-
                 gameCENTER.add(board[i][j]);
             }
         }
@@ -121,12 +124,15 @@ public class SnakesAndLadders implements ActionListener {
         diceLabel2.setIcon(diceIcon2);
 
 
-        gameSOUTH.add(btn_start);
+        gameNORTH.add(btn_start);
+        gameSOUTH.add(btn_resign_player1);
         gameSOUTH.add(btn_player1);
         gameSOUTH.add(diceLabel1);
         gameSOUTH.add(diceLabel2);
         gameSOUTH.add(btn_player2);
-        gameSOUTH.add(btn_restart);
+        gameSOUTH.add(btn_resign_player2);
+        gameNORTH.add(btn_restart);
+        gameNORTH.add(btn_exit);
 
         gamePanel.add(gameCENTER, BorderLayout.CENTER);
         gamePanel.add(gameNORTH, BorderLayout.NORTH);
@@ -198,7 +204,6 @@ public class SnakesAndLadders implements ActionListener {
             player2_position = 1;
             clickCounter = 0;
         }
-
     }
 
     void drawBoard() {
@@ -228,8 +233,10 @@ public class SnakesAndLadders implements ActionListener {
                         else
                             board[i][j].setIcon(player1Left);
                     }
-                    else
+
+                    if(player1_position != game[i][j] && player2_position != game[i][j]) {
                         board[i][j].setIcon(boardImage[i][j]);
+                    }
                 }
             }
         }
@@ -284,6 +291,9 @@ public class SnakesAndLadders implements ActionListener {
         }
         btn_player1.setEnabled(false);
         btn_player2.setEnabled(false);
+        btn_resign_player1.setEnabled(false);
+        btn_resign_player2.setEnabled(false);
+        frame.setSize(675, 730);
     }
 
     void startGame(){
@@ -296,6 +306,7 @@ public class SnakesAndLadders implements ActionListener {
     void restartGame(){
         btn_restart.setEnabled(false);
         gameOver = false;
+        frame.setSize(675, 790);
         drawBoard();
         startingPlayer();
     }
@@ -341,7 +352,6 @@ public class SnakesAndLadders implements ActionListener {
                     board[2][1].setIcon(player2Left);
                     player2_lastPosition = 12;
                     board[4][0].removeActionListener(this);
-                    board[4][0].setIcon(boardImage[4][0]);
                     btn_player1.setEnabled(true);
                 }
             });
@@ -452,6 +462,11 @@ public class SnakesAndLadders implements ActionListener {
             if (event.getSource() == btn_player1) {
                 clickCounter++;
                 btn_restart.setEnabled(true);
+                if(btn_player1.isEnabled())
+                {
+                    btn_resign_player1.setEnabled(false);
+                    btn_resign_player2.setEnabled(true);
+                }
 
                 diceValue1 = throwDice(this.diceLabel1);
                 diceValue2 = throwDice(this.diceLabel2);
@@ -465,10 +480,15 @@ public class SnakesAndLadders implements ActionListener {
                 checkIfLadderOrSnake(player1_position);
                 if(gameOver)
                     playerWin("Player1");
+
             } else if (event.getSource() == btn_player2) {
                 clickCounter++;
                 btn_restart.setEnabled(true);
-
+                if(btn_player2.isEnabled())
+                {
+                    btn_resign_player1.setEnabled(true);
+                    btn_resign_player2.setEnabled(false);
+                }
                 diceValue1 = throwDice(this.diceLabel1);
                 diceValue2 = throwDice(this.diceLabel2);
 
@@ -485,13 +505,20 @@ public class SnakesAndLadders implements ActionListener {
                     playerWin("Player2");
                 }
 
-
             } else if (event.getSource() == btn_start) {
                 startGame();
             }
-
+            else if (event.getSource() == btn_resign_player1){
+                playerWin("Player2");
+            }
+            else if (event.getSource() == btn_resign_player2){
+                playerWin("Player1");
+            }
             else if (event.getSource()==btn_restart) {
                restartGame();
+            }
+            else if(event.getSource()==btn_exit){
+                frame.dispose();
             }
 
         } catch (Exception button) {
@@ -499,4 +526,3 @@ public class SnakesAndLadders implements ActionListener {
         }
     }
 }
-
