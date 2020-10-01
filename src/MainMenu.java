@@ -2,6 +2,7 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 public class MainMenu {
@@ -40,6 +41,7 @@ public class MainMenu {
         menu.setVisible(true);
         menu.setResizable(false);
 
+
         rollDice.addActionListener(e -> new DiceRollGame());
         maxClicks.addActionListener(e -> new MaxClickGame());
         SnL.addActionListener(e -> {
@@ -50,6 +52,11 @@ public class MainMenu {
             }
         });
         exit.addActionListener(e -> menu.dispose());
+        exit.addActionListener(e -> {
+            if (JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "WARNING",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                menu.dispose();
+            }
+        });
     }
-
 }
