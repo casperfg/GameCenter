@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -44,13 +42,7 @@ public class MainMenu {
 
         rollDice.addActionListener(e -> new DiceRollGame());
         maxClicks.addActionListener(e -> new MaxClickGame());
-        SnL.addActionListener(e -> {
-            try {
-                new SnakesAndLadders();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        });
+        SnL.addActionListener(e -> new SnakesAndLadders());
         exit.addActionListener(e -> menu.dispose());
         exit.addActionListener(e -> {
             if (JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "WARNING",

@@ -3,10 +3,9 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Random;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -15,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 
 public class SnakesAndLadders implements ActionListener {
     final JFrame frame;
@@ -45,7 +43,7 @@ public class SnakesAndLadders implements ActionListener {
                           {12, 11, 10,  9,  8,  7},
                           { 1,  2,  3,  4,  5,  6}};
 
-    public SnakesAndLadders() throws IOException {
+    public SnakesAndLadders() {
         frame = new JFrame("Snakes and Ladders");           //main frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   //exit program on close
         frame.setLayout(new BorderLayout());
@@ -102,16 +100,22 @@ public class SnakesAndLadders implements ActionListener {
         gameNORTH.setLayout(new GridLayout(1, 2));
         gameSOUTH.setLayout(new FlowLayout());
 
-        player1Right = new ImageIcon(getClass().getClassLoader().getResource("Images/player1.gif"));
-        player2Right = new ImageIcon(getClass().getClassLoader().getResource("Images/player2.gif"));
-        player1Left = new ImageIcon(getClass().getClassLoader().getResource("Images/player1Left.gif"));        //define the icons
-        player2Left = new ImageIcon(getClass().getClassLoader().getResource("Images/player2Left.gif"));        //facing right or left
+        player1Right = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                                                getResource("Images/player1.gif")));
+        player2Right = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                                                getResource("Images/player2.gif")));
+        player1Left = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                                                getResource("Images/player1Left.gif")));        //define the icons
+        player2Left = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                                                getResource("Images/player2Left.gif")));        //facing right or left
 
         for (int i = 0; i < 6; i++) {               //places the images on correct buttonNr
             for (int j = 0; j < 6; j++) {
                 board[i][j] = new JButton();
                 blockNr = Integer.toString(game[i][j]);
-                boardImage[i][j] = new ImageIcon(getClass().getClassLoader().getResource("Images/"+blockNr+".jpg"));
+                boardImage[i][j] = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                                                getResource("Images/" + blockNr + ".jpg")));
+
                 board[i][j].setIcon(boardImage[i][j]);
                 gameCENTER.add(board[i][j]);
             }
@@ -119,8 +123,11 @@ public class SnakesAndLadders implements ActionListener {
 
         //diceIcon1 = new ImageIcon("./Images/Dice/Dice1.jpg");       //define the dice
         //diceIcon2 = new ImageIcon("./Images/Dice/Dice3.jpg");
-        diceIcon1 = new ImageIcon(getClass().getClassLoader().getResource("Images/Dice/Dice3.jpg"));
-        diceIcon2 = new ImageIcon(getClass().getClassLoader().getResource("Images/Dice/Dice3.jpg"));
+        diceIcon1 = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                                        getResource("Images/Dice/Dice3.jpg")));
+
+        diceIcon2 = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                                        getResource("Images/Dice/Dice3.jpg")));
 
         diceLabel1.setIcon(diceIcon1);
         diceLabel2.setIcon(diceIcon2);
@@ -144,9 +151,10 @@ public class SnakesAndLadders implements ActionListener {
     }
 
     // creates the rule page from txt doc
-    void rulePage() throws IOException {
+    void rulePage() {
         helpPanel = new JPanel();
-        Icon rules = new ImageIcon(getClass().getClassLoader().getResource("Images/rules.jpg"));
+        Icon rules = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                        getResource("Images/rules.jpg")));
         JLabel tutorial = new JLabel();
 
         tutorial.setIcon(rules);
@@ -161,7 +169,8 @@ public class SnakesAndLadders implements ActionListener {
     int throwDice(JLabel die) {
         int dice_throw = Dice.Roll();
         blockNr = Integer.toString(dice_throw);
-        diceIcon1 = new ImageIcon(getClass().getClassLoader().getResource("Images/Dice/Dice" + blockNr + ".jpg"));
+        diceIcon1 = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                getResource("Images/Dice/Dice" + blockNr + ".jpg")));
 
         die.setIcon(diceIcon1);
         return dice_throw;      //returns nr between 1 and 6
@@ -260,12 +269,11 @@ public class SnakesAndLadders implements ActionListener {
 
     //Checks if player has gotten equal dice on throw
     void checkEqualDice(int die1, int die2, JButton btn1, JButton btn2){
-        if (die1 == die2){
+        if (die1 == die2 ){
             btn1.setEnabled(true);
             btn2.setEnabled(false);
         }
-        else
-        {
+        else {
             btn1.setEnabled(false);
             btn2.setEnabled(true);
         }
@@ -293,12 +301,12 @@ public class SnakesAndLadders implements ActionListener {
     }
 
     //Reveal win screen after a warning message
-    void playerWin(String player){
+    void player1Win(){
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 6; j++) {
                     blockNr = Integer.toString(game[i][j]);
-                   // winScreen[i][j] = new ImageIcon("./Images/Win"+ player +"/Win" + blockNr + ".jpg");
-                    winScreen[i][j] = new ImageIcon(getClass().getClassLoader().getResource("Images/Win"+ player +"/Win"+blockNr+".jpg"));
+                    winScreen[i][j] = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                            getResource("Images/WinScreen/1Win" + blockNr + ".jpg")));
                     board[i][j].setIcon(winScreen[i][j]);
                 }
             }
@@ -307,6 +315,22 @@ public class SnakesAndLadders implements ActionListener {
             btn_resign_player1.setEnabled(false);
             btn_resign_player2.setEnabled(false);
             frame.setSize(675, 730);
+    }
+
+    void player2Win(){
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                blockNr = Integer.toString(game[i][j]);
+                winScreen[i][j] = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().
+                        getResource("Images/WinScreen/2Win" + blockNr + ".jpg")));
+                board[i][j].setIcon(winScreen[i][j]);
+            }
+        }
+        btn_player1.setEnabled(false);
+        btn_player2.setEnabled(false);
+        btn_resign_player1.setEnabled(false);
+        btn_resign_player2.setEnabled(false);
+        frame.setSize(675, 730);
     }
 
     //Starts the game :D
@@ -329,6 +353,15 @@ public class SnakesAndLadders implements ActionListener {
             startingPlayer();
             btn_resign_player1.setEnabled(true);
             btn_resign_player2.setEnabled(true);
+        }
+    }
+
+    void firstThrow(){
+        if(clickCounter == 1){
+            while(diceValue1 == diceValue2){
+                diceValue1 = throwDice(this.diceLabel1);
+                diceValue2 = throwDice(this.diceLabel2);
+            }
         }
     }
 
@@ -495,15 +528,20 @@ public class SnakesAndLadders implements ActionListener {
                 diceValue1 = throwDice(this.diceLabel1);
                 diceValue2 = throwDice(this.diceLabel2);
 
+                firstThrow();
+
                 totalDiceValue = diceValue1 + diceValue2;
+
+                checkEqualDice(diceValue1, diceValue2, btn_player1, btn_player2);
                 player1_position += totalDiceValue;
                 player1_lastPosition = player1_position - totalDiceValue;
                 move(player1Right, player1_position, player1_lastPosition);
+                
                 placePlayerAtStart(player2Right);
-                checkEqualDice(diceValue1, diceValue2, btn_player1, btn_player2);
+
                 checkIfLadderOrSnake(player1_position);
                 if(gameOver)
-                    playerWin("Player1");
+                    player1Win();
 
             } else if (event.getSource() == btn_player2) {
                 clickCounter++;
@@ -511,18 +549,20 @@ public class SnakesAndLadders implements ActionListener {
 
                 diceValue1 = throwDice(this.diceLabel1);
                 diceValue2 = throwDice(this.diceLabel2);
+                firstThrow();
 
                 totalDiceValue = diceValue1 + diceValue2;
+                checkEqualDice(diceValue1, diceValue2, btn_player2, btn_player1);
+
                 player2_position = player2_position + totalDiceValue;
                 player2_lastPosition = player2_position - totalDiceValue;
                 move(player2Right, player2_position, player2_lastPosition);
 
                 placePlayerAtStart(player1Right);
-                checkEqualDice(diceValue1, diceValue2, btn_player2, btn_player1);
                 checkIfLadderOrSnake(player2_position);
 
                 if(gameOver){
-                    playerWin("Player2");
+                    player2Win();
                 }
 
             }
@@ -530,13 +570,13 @@ public class SnakesAndLadders implements ActionListener {
             else if (event.getSource() == btn_resign_player1){
                 if (JOptionPane.showConfirmDialog(null, "Are you sure you want to resign?", "WARNING",
                         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    playerWin("Player2");
+                    player2Win();
                 }
             }
             else if (event.getSource() == btn_resign_player2){
                 if (JOptionPane.showConfirmDialog(null, "Are you sure you want to resign?", "WARNING",
                         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    playerWin("Player1");
+                    player1Win();
                 }
             }
             else if (event.getSource()==btn_restart) restartGame();
